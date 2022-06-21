@@ -5,10 +5,10 @@ from . import models
 
 
 class PostList(ListView):
-    queryset = models.Post.published.all()
+    queryset = models.Post.published_manager.all()
     context_object_name = 'posts'
-    paginate_by = 3
-    template_name = 'blog/post,list.html'
+    paginate_by = 10
+    template_name = 'blog/post/list.html'
 
 
 def post_detail(request, year, month, day, post):
