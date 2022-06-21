@@ -3,26 +3,14 @@ from django.contrib.auth.models import User
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="user")
-    city = models.CharField(max_length=36, null=True, verbose_name="city")
-    about = models.TextField(max_length=10000, null=True, verbose_name="about")
-    birthday = models.DateField(verbose_name="birthday")
-    verify = models.BooleanField(default=False, verbose_name="verification")
+    icon = models.ImageField(default='default/no_image.png', upload_to='users', blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='user')
+    about = models.TextField(max_length=10000, null=True, verbose_name='about')
+    birthday = models.DateField(verbose_name='birthday')
 
     class Meta:
-        permissions = (
-            ("verified", "Верифицирован"),
-        )
-        verbose_name = "profile"
-        verbose_name_plural = "profiles"
+        verbose_name = 'profile'
+        verbose_name_plural = 'profiles'
 
     def get_absolute_url(self):
-        return f"/user/{self.id}"
-
-
-class ProfileIcon(models.Model):
-    icon = models.ImageField(upload_to="users")
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "user_icon"
+        return f'/user/{self.id}'
