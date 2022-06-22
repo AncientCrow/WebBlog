@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.views.generic import DetailView
 
 from . import forms, models
 
@@ -42,15 +43,13 @@ class RegistrationPage(View):
 class UserList(View):
 
     def get(self, request):
-        users_list = models.User.objects.only('login')
+        users_list = models.User.objects.annotate(blog_count=Count('blog_post'))
         paginator = Paginator(users_list, 10)
         page = request.GET.get('page')
         pages = paginator.get_page(page)
-        post_count = models.User.objects.annotate(blog_count=Count('blog_post'))
         return render(
             request, 'users/user/list.html', {
                 'users': pages,
-                'user_post': post_count,
                 'section': 'users'}
         )
 
@@ -58,6 +57,7 @@ class UserList(View):
 class UserDetail(View):
 
     def get(self, request, pk):
+
         user = request.user.id
         page_user = get_object_or_404(models.Profile, user_id=user)
         return render(request, 'users/user/detail.html', {
