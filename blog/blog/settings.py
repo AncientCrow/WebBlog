@@ -69,7 +69,7 @@ DATABASES = {
 
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'django_shop',
+        'NAME': 'django_blog',
         'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': 'localhost',
@@ -78,7 +78,6 @@ DATABASES = {
     }
 
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -111,6 +110,11 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+# Redirects
+
+LOGIN_REDIRECT_URL = 'blog:post_list'
+LOGOUT_REDIRECT_URL = 'blog:post_list'
 
 
 # Static files (CSS, JavaScript, Images)
