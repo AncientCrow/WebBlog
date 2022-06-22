@@ -1,7 +1,10 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView, LogoutView
-from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.db.models import Count
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+
 from . import forms, models
 
 
@@ -34,6 +37,30 @@ class RegistrationPage(View):
             return redirect("post_list")
         else:
             return render(request, 'users/registration.html', {'form': form})
+
+
+class UserList(View):
+
+    def get(self, request):
+        users_list = models.User.objects.only('login')
+        paginator = Paginator(users_list, 10)
+        page = request.GET.get('page')
+        pages = paginator.get_page(page)
+        post_count = models.User.objects.annotate(blog_count=Count('post'))
+        return render(
+            request, 'users/list.html',{
+                'users': pages,
+                'user_post': post_count
+            }
+        )
+
+
+class UserDetail(View):
+
+    def get(self, request, pk):
+        user = request.user.id
+        page_user = get_object_or_404(models.Profile, user_id=user)
+        return render(request, 'user/detail.html', {'profile': page_user})
 
 
 class LoginPage(LoginView):
