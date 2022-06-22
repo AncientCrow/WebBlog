@@ -64,7 +64,7 @@ class UserDetail(View):
 
 
 class LoginPage(LoginView):
-    template_name = 'user/login.html'
+    template_name = 'users/user/login.html'
     authentication_form = forms.LoginForm
 
 
