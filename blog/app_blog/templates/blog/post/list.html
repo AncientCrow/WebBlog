@@ -1,6 +1,8 @@
 {% extends 'blog/base.html' %}
 {% block title %}Это мой блог{% endblock %}
 {% block content %}
+    <a href="{% url 'blog:post_filter' pk=1 %}"><button>Свежие</button></a>
+    <a href="{% url 'blog:post_filter' pk=2 %}"><button>Старые</button></a>
     {% for post in posts %}
         <h2>
             <a href="{{ post.get_absolute_url }}">{{ post.title }}</a>
