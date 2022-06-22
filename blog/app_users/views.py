@@ -12,7 +12,7 @@ class RegistrationPage(View):
 
     def get(self, request):
         registration = forms.RegistrationForm
-        return render(request, 'users/registration.html', {'form': registration})
+        return render(request, 'users/user/registration.html', {'form': registration})
 
     def post(self, request):
         form = forms.RegistrationForm(request.POST, request.FILES)
@@ -36,7 +36,7 @@ class RegistrationPage(View):
             user.save()
             return redirect("post_list")
         else:
-            return render(request, 'users/registration.html', {'form': form})
+            return render(request, 'users/user/registration.html', {'form': form})
 
 
 class UserList(View):
@@ -46,12 +46,12 @@ class UserList(View):
         paginator = Paginator(users_list, 10)
         page = request.GET.get('page')
         pages = paginator.get_page(page)
-        post_count = models.User.objects.annotate(blog_count=Count('post'))
+        post_count = models.User.objects.annotate(blog_count=Count('blog_post'))
         return render(
-            request, 'users/list.html',{
+            request, 'users/user/list.html', {
                 'users': pages,
-                'user_post': post_count
-            }
+                'user_post': post_count,
+                'section': 'users'}
         )
 
 
@@ -60,11 +60,14 @@ class UserDetail(View):
     def get(self, request, pk):
         user = request.user.id
         page_user = get_object_or_404(models.Profile, user_id=user)
-        return render(request, 'user/detail.html', {'profile': page_user})
+        return render(request, 'users/user/detail.html', {
+            'profile': page_user,
+            'section': 'profile'}
+        )
 
 
 class LoginPage(LoginView):
-    template_name = 'user/login.html'
+    template_name = 'users/user/login.html'
     authentication_form = forms.LoginForm
 
 

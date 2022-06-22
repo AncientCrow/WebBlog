@@ -6,6 +6,21 @@
     <title>{% block title%}{% endblock %}</title>
 </head>
 <body>
+    <div id="header">
+        {% if request.user.is_authenticated %}
+            <ul class="menu">
+                <li {% if section == "profile" %} class="selected" {% endif %}>
+                    <a href="{% url "users:user_detail" user.id %}">Мой профиль</a>
+                </li>
+                <li {% if section == "posts" %} class="selected" {% endif %}>
+                    <a href="{% url "blog:post_list" %}">Посты</a>
+                </li>
+                <li {% if section == "users" %} class="selected" {% endif %}>
+                    <a href="{% url "users:user_list" %}">Пользователи</a>
+                </li>
+            </ul>
+        {% endif %}
+    </div>
     <div id="content">
         {% block content %}{% endblock %}
     </div>
