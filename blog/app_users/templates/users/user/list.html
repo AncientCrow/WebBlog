@@ -3,6 +3,8 @@
 {% block title %}Список пользователей{% endblock %}
 
 {% block content %}
+    <a href="{% url 'users:users_filter' pk=1 %}"><button>От большего</button></a>
+    <a href="{% url 'users:users_filter' pk=2 %}"><button>От меньшего</button></a>
     {% for user in users %}
         <p>Пользователь {{ user.username }} и его количество постов {{ user.blog_count }}</p>
     {% endfor %}

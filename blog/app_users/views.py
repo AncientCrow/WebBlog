@@ -43,7 +43,7 @@ class RegistrationPage(View):
 class UserList(View):
 
     def get(self, request):
-        users_list = models.User.objects.annotate(blog_count=Count('blog_post'))
+        users_list = models.User.objects.annotate(blog_count=Count('blog_post')).order_by('blog_count')
         paginator = Paginator(users_list, 10)
         page = request.GET.get('page')
         pages = paginator.get_page(page)
@@ -53,6 +53,21 @@ class UserList(View):
                 'section': 'users'}
         )
 
+
+class UsersFilter(View):
+
+    def get(self, request, pk):
+        if pk == 1:
+            users_list = models.User.objects.annotate(blog_count=Count('blog_post')).order_by('-blog_count')
+        elif pk == 2:
+            users_list = models.User.objects.annotate(blog_count=Count('blog_post')).order_by('blog_count')
+        paginator = Paginator(users_list, 10)
+        page = request.GET.get('page')
+        pages = paginator.get_page(page)
+        return render(request, 'users/user/list.html', {
+            'users': pages,
+            'section': 'users'}
+        )
 
 class UserDetail(View):
 
