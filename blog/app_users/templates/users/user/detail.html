@@ -3,6 +3,28 @@
 {% block title %}Мой профиль{% endblock %}
 
 {% block content%}
-    <h1>Это твой профиль {{ user.username }}</h1>
+    <h1>Это профиль {{ profile.username }}</h1>
+    <div class="profile-info">
+        <p>А это фото профиля</p>
+        <img src="{{ profile.icon.url }}">
+        {% with total_followers=user.followers.count %}
+        <span class="count">
+            <span class="total">
+                {{ total_followers }}
+            </span>
+            {{ total_followers|pluralize }}
+        </span>
+        {% endwith %}
+        <a href="#" data-id="{{ user.id }}"
+           data-action="{% if request.user in user.followers.all %}un{% endif %}follow"
+           class="follow button">
+            {% if request.user not in user.followers.all %}
+            Follow
+            {% else %}
+            Unfollow
+            {% endif %}
+        </a>
+    </div>
     <p>Добро пожаловать хптьфу</p>
+
 {% endblock %}
