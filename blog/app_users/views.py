@@ -1,11 +1,14 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views.generic import DetailView
-from django.views.generic.detail import SingleObjectMixin
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from utils.decorators import required_ajax
 
 from . import forms, models
 
@@ -88,3 +91,22 @@ class LoginPage(LoginView):
 
 class LogoutPage(LogoutView):
     pass
+
+
+@required_ajax
+@require_POST
+@login_required
+def user_follow(request):
+    user_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if user_id and action:
+        try:
+            user = User.objects.get(id=user_id)
+            if action == 'follow':
+                models.Follow.objects.get_or_create(follower=request.user, followed=user)
+            else:
+                models.Follow.objects.filter(follower=request.user, followed=user).delete()
+            return JsonResponse({'status': 'ok'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'ok'})
