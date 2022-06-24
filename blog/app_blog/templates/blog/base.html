@@ -10,7 +10,7 @@
         {% if request.user.is_authenticated %}
             <ul class="menu">
                 <li {% if section == "profile" %} class="selected" {% endif %}>
-                    <a href="{% url "users:user_detail" user.id %}">Мой профиль</a>
+                    <a href="{% url "users:user_detail" user.username %}">Мой профиль</a>
                 </li>
                 <li {% if section == "posts" %} class="selected" {% endif %}>
                     <a href="{% url "blog:post_list" %}">Посты</a>
