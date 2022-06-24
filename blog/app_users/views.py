@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.views.generic import DetailView
+from django.views.generic.detail import SingleObjectMixin
 
 from . import forms, models
 
@@ -67,18 +68,17 @@ class UsersFilter(View):
         return render(request, 'users/user/list.html', {
             'users': pages,
             'section': 'users'}
-        )
+                      )
+
 
 class UserDetail(View):
 
-    def get(self, request, pk):
-
-        user = request.user.id
-        page_user = get_object_or_404(models.Profile, user_id=user)
+    def get(self, request, username):
+        page_user = get_object_or_404(models.User, username=username)
         return render(request, 'users/user/detail.html', {
             'profile': page_user,
             'section': 'profile'}
-        )
+                      )
 
 
 class LoginPage(LoginView):

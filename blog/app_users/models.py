@@ -28,9 +28,9 @@ class Profile(models.Model):
         return f'/user/{self.id}'
 
 # модель пользователя не определена, требуется динамическое добавление
-User.add_to_class('following',
-                  models.ManyToManyField('self',
-                                         through=Follow,
-                                         related_name='followers',
-                                         symmetrical=False)
+ User.add_to_class('following',
+                   models.ManyToManyField('self',
+                                          through=Follow,
+                                          related_name='followers',
+                                          symmetrical=False)
                   )
