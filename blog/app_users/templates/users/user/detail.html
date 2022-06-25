@@ -1,30 +1,39 @@
 {% extends 'users/base.html' %}
 
-{% block title %}Мой профиль{% endblock %}
+{% block title %} Профиль {{ profile.user.username }}{% endblock %}
 
 {% block content%}
-    <h1>Это профиль {{ profile.username }}</h1>
+    <h1>Это профиль {{ profile.user.username }}</h1>
     <div class="profile-info">
         <p>А это фото профиля</p>
-        <img src="{{ profile.icon.url }}">
-        {% with total_followers=user.followers.count %}
+        <img src="{{ user.icon.url }}">
+        {% with total_followers=profile.followers.count %}
         <span class="count">
             <span class="total">
-                {{ total_followers }}
+               Всего подписчиков: {{ total_followers }}
             </span>
-            {{ total_followers|pluralize }}
         </span>
-        {% endwith %}
-        <a href="#" data-id="{{ user.id }}"
-           data-action="{% if request.user in user.followers.all %}un{% endif %}follow"
-           class="follow button">
-            {% if request.user not in user.followers.all %}
-            Follow
-            {% else %}
-            Unfollow
-            {% endif %}
-        </a>
+        {% if request.user != profile.user %}
+            <form action="{% url 'users:user_follow' %}" method="post">
+                {% csrf_token %}
+                {% if request.user in profile.followers.all %}
+                <input type="hidden" name="profile_id" value="{{ profile.id }}">
+                <button id="unfollow-btn" type="submit" class="unfollow">unfollow</button>
+                {% else %}
+                <input type="hidden" name="profile_id" value="{{ profile.id }}">
+                <button id="follow-btn" type="submit" class="follow">follow</button>
+                {% endif %}
+            </form>
+        {% endif %}
     </div>
+    {% endwith %}
     <p>Добро пожаловать хптьфу</p>
+{% endblock %}
 
+{% block scripts %}
+<script>
+    $(document).ready(function(){
+        $(#follow-btn).click(function(){
+    })
+</script>
 {% endblock %}

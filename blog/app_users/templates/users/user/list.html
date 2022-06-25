@@ -6,6 +6,16 @@
     <a href="{% url 'users:users_filter' pk=1 %}"><button>От большего</button></a>
     <a href="{% url 'users:users_filter' pk=2 %}"><button>От меньшего</button></a>
     {% for profile in users %}
-        <p>Пользователь <a href="{% url "users:user_detail" profile.username %}">{{ profile.username }}</a> и его количество постов {{ user.blog_count }}</p>
+        <p>Пользователь
+            <a href="{% url "users:user_detail" profile.username %}">
+                {{ profile.username }}
+            </a>
+            и его количество постов
+            {% if user.blog_count is None %}
+            0
+            {% else %}
+            {{ user.blog_count }}
+            {% endif %}
+        </p>
     {% endfor %}
 {% endblock %}

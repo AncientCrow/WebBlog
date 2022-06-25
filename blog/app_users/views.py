@@ -1,14 +1,12 @@
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LoginView, LogoutView
 from django.core.paginator import Paginator
 from django.db.models import Count
+from app_users.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from utils.decorators import required_ajax
+
 
 from . import forms, models
 
@@ -77,11 +75,12 @@ class UsersFilter(View):
 class UserDetail(View):
 
     def get(self, request, username):
-        page_user = get_object_or_404(models.User, username=username)
+        user = get_object_or_404(models.User, username=username)
+        profile = get_object_or_404(models.Profile, user=user)
         return render(request, 'users/user/detail.html', {
-            'profile': page_user,
+            'profile': profile,
             'section': 'profile'}
-                      )
+        )
 
 
 class LoginPage(LoginView):
@@ -93,20 +92,14 @@ class LogoutPage(LogoutView):
     pass
 
 
-@required_ajax
-@require_POST
-@login_required
 def user_follow(request):
-    user_id = request.POST.get('id')
-    action = request.POST.get('action')
-    if user_id and action:
-        try:
-            user = User.objects.get(id=user_id)
-            if action == 'follow':
-                models.Follow.objects.get_or_create(follower=request.user, followed=user)
-            else:
-                models.Follow.objects.filter(follower=request.user, followed=user).delete()
-            return JsonResponse({'status': 'ok'})
-        except User.DoesNotExist:
-            return JsonResponse({'status': 'ok'})
-    return JsonResponse({'status': 'ok'})
+    if request.method == 'POST':
+        follower = models.Profile.objects.get(user=request.user)
+        profile_id = request.POST.get('profile_id')
+        followed = models.Profile.objects.get(pk=profile_id)
+        if follower.user in followed.followers.all():
+            followed.followers.remove(follower.user)
+        else:
+            followed.followers.add(follower.user)
+        return redirect('users:user_detail', followed.user.username)
+    return redirect('users:user_list')
