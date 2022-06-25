@@ -28,12 +28,5 @@
     </div>
     {% endwith %}
     <p>Добро пожаловать хптьфу</p>
-{% endblock %}
-
-{% block scripts %}
-<script>
-    $(document).ready(function(){
-        $(#follow-btn).click(function(){
-    })
-</script>
+    <a href="{% url 'users:personal_feed' request.user %}  ">Новости</a>
 {% endblock %}
