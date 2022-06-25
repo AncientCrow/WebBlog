@@ -16,20 +16,24 @@ class PostList(ListView):
 class PostDetail(View):
 
     def get(self, request, year, month, day, post):
-        post = get_object_or_404(models.Post, slug=post, status='published',
-                                 published__year=year, published__month=month, published__day=day)
+        user = request.user
+        our_post = get_object_or_404(models.Post, slug=post, status='published',
+                                     published__year=year, published__month=month, published__day=day)
+        our_post.read_status.add(user.id)
         return render(request, 'blog/post/detail.html', {
-            'post': post,
-            'section': 'posts'}
+            'user': user,
+            'post': our_post,
+            'section': 'posts',
+            'status': True, }
                       )
 
 
 class PostFilter(View):
 
-    def get(self, request, pk):
-        if pk == 1:
+    def get(self, request, action):
+        if action == 1:
             posts = models.Post.published_manager.order_by('-published')
-        elif pk == 2:
+        elif action == 2:
             posts = models.Post.published_manager.order_by('published')
         paginator = Paginator(posts, 10)
         page = request.GET.get('page')
@@ -44,3 +48,27 @@ class PostFilter(View):
             'page': page,
             'section': 'posts'
         })
+
+
+class PostReadFilter(View):
+
+    def get(self, request, status):
+        user = request.user
+        if status == "read":
+            posts = models.Post.objects.filter(read_status__in=[user.id])
+        else:
+            posts = models.Post.objects.exclude(read_status__in=[user.id])
+        paginator = Paginator(posts, 10)
+        page = request.GET.get('page')
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        return render(request, 'blog/post/list.html', {
+            'posts': posts,
+            'page': page,
+            'section': 'posts'
+        })
+
