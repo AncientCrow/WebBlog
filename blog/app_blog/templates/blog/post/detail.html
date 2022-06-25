@@ -1,7 +1,13 @@
 {% extends 'blog/base.html' %}
 {% block title %}{{ post.title }}{% endblock %}
 {% block content %}
+    {% if status %}
+        <p>Теперь ты прочитал это</p>
+    {% else %}
+    {{ post.read_status }}
+    {% endif %}
     <h1>{{ post.title }}</h1>
+    <h3>{{ post.text }}</h3>
     <p class="date">{{ post.author }} опубликовал  {{ post.published }}</p>
     {{ post.text|linebreaks }}
 {% endblock %}

@@ -26,6 +26,7 @@ class Post(models.Model):
     status = models.CharField(max_length=30, choices=STATUS, default='draft')
     objects = models.Manager()
     published_manager = PublishedManager()
+    read_status = models.ManyToManyField(User, related_name='checked', blank=True)
 
     class Meta:
         ordering = ('-published',)

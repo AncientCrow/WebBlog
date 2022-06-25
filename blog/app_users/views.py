@@ -1,14 +1,12 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.views import LoginView, LogoutView
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
-from app_users.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.http import JsonResponse
-
 
 from . import forms, models
+from app_blog import models as post_models
 
 
 class RegistrationPage(View):
@@ -103,3 +101,25 @@ def user_follow(request):
             followed.followers.add(follower.user)
         return redirect('users:user_detail', followed.user.username)
     return redirect('users:user_list')
+
+
+class FeedFromFollow(View):
+
+    def get(self, request, username):
+        username = models.User.objects.get(username=username)
+        profiles = models.Profile.objects.filter(followers__in=[username.id])
+        profiles = [user.user.id for user in profiles]
+        posts = post_models.Post.objects.filter(author__in=profiles, status='published').order_by('-published')
+        paginator = Paginator(posts, 10)
+        page = request.GET.get('page')
+        try:
+            posts = paginator.get_page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        return render(request, 'users/user/feeds.html', {
+            'posts': posts,
+            'page': posts,
+            'section': 'posts'
+        })
