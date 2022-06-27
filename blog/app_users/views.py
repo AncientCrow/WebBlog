@@ -5,8 +5,10 @@ from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
-
+from django_filters import ChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework.filters import OrderingFilter
 
 from . import forms, models
 from app_blog import models as post_models
@@ -133,24 +135,26 @@ class FeedFromFollow(View):
 
 class UserListAPI(ListAPIView):
 
-    queryset = User.objects.all().order_by('date_joined')
+    queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['date_joined', ]
 
 
 class UserDetailAPI(RetrieveAPIView):
-    queryset = User.objects.all().order_by('date_joined')
+    queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
 
 
 class ProfileListAPI(ListAPIView):
 
-    queryset = models.Profile.objects.all().order_by('user__date_joined')
+    queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['user__date_joined', ]
 
 
 class ProfileDetailAPI(RetrieveUpdateAPIView):
 
-    queryset = models.Profile.objects.all().order_by('user__date_joined')
+    queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
