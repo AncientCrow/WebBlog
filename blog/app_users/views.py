@@ -87,7 +87,7 @@ class LoginPage(LoginView):
 
 
 class LogoutPage(LogoutView):
-    template_name = 'users/user/logout.html'
+    pass
 
 
 def user_follow(request):

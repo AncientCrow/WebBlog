@@ -122,10 +122,6 @@ class LogoutTest(TestCase):
         response = self.client.get(reverse('users:logout'))
         self.assertEqual(response.status_code, 302)
 
-    def test_url_use_valid_template(self):
-        response = self.client.get(reverse('users:logout'))
-        self.assertTemplateUsed(response, 'users/user/logout.html')
-
 
 class FollowTest(TestCase):
 
@@ -146,7 +142,13 @@ class FollowTest(TestCase):
             birthday=timezone.now(),
         )
 
-    def test_url_exist(self):
+    def test_url_exist_get(self):
         self.client.login(username='test', password='123qwe!@#')
-        response = self.client.post('/users/user/{}/'.format(self.profile.user.username))
-        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/users/follow/')
+        self.assertRedirects(response, '/users/')
+
+    def test_url_exist_post(self):
+        self.client.login(username='test', password='123qwe!@#')
+        profile = self.profile.user.username
+        response = self.client.post('/users/follow/')
+        self.assertRedirects(response, '/users/user/{}/'.format(profile))
