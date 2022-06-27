@@ -85,15 +85,18 @@ class UserDetailTest(TestCase):
         self.profile.followers.add(user_1.id)
 
     def test_url_exist(self):
-        response = self.client.get('/users/user/{}/'.format(self.profile.user.username))
+        username = self.profile.user.username
+        response = self.client.get('/users/user/{}/'.format(username))
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_by_name(self):
-        response = self.client.get(reverse('users:user_detail', kwargs={'username': self.profile.user.username}))
+        username = self.profile.user.username
+        response = self.client.get(reverse('users:user_detail', kwargs={'username': username}))
         self.assertEqual(response.status_code, 200)
 
     def test_url_use_valid_template(self):
-        response = self.client.get(reverse('users:user_detail', kwargs={'username': self.profile.user.username}))
+        username = self.profile.user.username
+        response = self.client.get(reverse('users:user_detail', kwargs={'username': username}))
         self.assertTemplateUsed(response, 'users/user/detail.html')
 
 
@@ -149,6 +152,68 @@ class FollowTest(TestCase):
 
     def test_url_exist_post(self):
         self.client.login(username='test', password='123qwe!@#')
-        profile = self.profile.user.username
-        response = self.client.post('/users/follow/')
-        self.assertRedirects(response, '/users/user/{}/'.format(profile))
+        username = self.profile.user.username
+        profile_id = self.profile.id
+        response = self.client.post('/users/follow/', data={'profile_id': profile_id})
+        self.assertRedirects(response, '/users/user/{}/'.format(username))
+
+    def test_url_exist_by_name_get(self):
+        self.client.login(username='test', password='123qwe!@#')
+        response = self.client.get(reverse('users:user_follow'))
+        self.assertRedirects(response, '/users/')
+
+    def test_url_exist_by_name_post(self):
+        self.client.login(username='test', password='123qwe!@#')
+        username = self.profile.user.username
+        profile_id = self.profile.id
+        response = self.client.post(reverse('users:user_follow'), data={'profile_id': profile_id})
+        self.assertRedirects(response, '/users/user/{}/'.format(username))
+
+    def test_url_use_valid_template_get(self):
+        self.client.login(username='test', password='123qwe!@#')
+        response = self.client.get(reverse('users:user_follow'))
+        self.assertTemplateNotUsed(response)
+
+    def test_url_use_valid_template_post(self):
+        self.client.login(username='test', password='123qwe!@#')
+        profile_id = self.profile.id
+        response = self.client.post(reverse('users:user_follow'), data={'profile_id': profile_id})
+        self.assertTemplateNotUsed(response)
+
+
+class FeedFromFollow(TestCase):
+
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username="test",
+                                             email="test@test.ru",
+                                             password="123qwe!@#"
+                                             )
+
+        user_1 = User.objects.create_user(username="test1",
+                                          email="test1@test.ru",
+                                          password="123qwe!@#"
+                                          )
+
+        self.profile = Profile.objects.create(
+            user=self.user,
+            about="test_text",
+            birthday=timezone.now(),
+        )
+
+    def test_url_exist(self):
+        self.client.login(username='test', password='123qwe!@#')
+        username = self.profile.user.username
+        response = self.client.get('/users/user/{}/feed/'.format(username))
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_exist_by_name(self):
+        self.client.login(username='test', password='123qwe!@#')
+        username = self.profile.user.username
+        response = self.client.get(reverse('users:personal_feed', kwargs={'username': username}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_use_valid_template(self):
+        self.client.login(username='test', password='123qwe!@#')
+        username = self.profile.user.username
+        response = self.client.get(reverse('users:personal_feed', kwargs={'username': username}))
+        self.assertTemplateUsed(response, 'users/user/feeds.html')
