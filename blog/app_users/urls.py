@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from . import views
 
@@ -11,5 +13,9 @@ urlpatterns = [
     path('follow/', views.user_follow, name='user_follow'),
     path("registration/", views.RegistrationPage.as_view(), name="registration"),
     path("login/", views.LoginPage.as_view(), name="login"),
-    path("logout/", views.LogoutPage.as_view(), name="logout")
-]
+    path("logout/", views.LogoutPage.as_view(), name="logout"),
+    path('user_api/', views.UserListAPI.as_view(), name='user_list_api'),
+    path('user_api/<int:pk>/', views.UserDetailAPI.as_view(), name='user_detail_api'),
+    path('profile_api/', views.ProfileListAPI.as_view(), name='profile_list_api'),
+    path('profile_api/<int:pk>/', views.ProfileDetailAPI.as_view(), name='profile_detail_api')
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
