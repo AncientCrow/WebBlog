@@ -4,9 +4,15 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
+from django.contrib.auth.models import User
+
+from django_filters.rest_framework import DjangoFilterBackend
 
 from . import forms, models
 from app_blog import models as post_models
+from app_users import serializers
+
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, RetrieveAPIView
 
 
 class RegistrationPage(View):
@@ -123,3 +129,28 @@ class FeedFromFollow(View):
             'page': posts,
             'section': 'posts'
         })
+
+
+class UserListAPI(ListAPIView):
+
+    queryset = User.objects.all().order_by('date_joined')
+    serializer_class = serializers.UserSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class UserDetailAPI(RetrieveAPIView):
+    queryset = User.objects.all().order_by('date_joined')
+    serializer_class = serializers.UserSerializer
+
+
+class ProfileListAPI(ListAPIView):
+
+    queryset = models.Profile.objects.all().order_by('user__date_joined')
+    serializer_class = serializers.ProfileSerializer
+    filter_backends = (DjangoFilterBackend,)
+
+
+class ProfileDetailAPI(RetrieveUpdateAPIView):
+
+    queryset = models.Profile.objects.all().order_by('user__date_joined')
+    serializer_class = serializers.ProfileSerializer
