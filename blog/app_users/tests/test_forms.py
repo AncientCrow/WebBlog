@@ -35,3 +35,20 @@ class RegistrationFormTest(TestCase):
         }
         form = forms.RegistrationForm(data=form_data)
         self.assertTrue(form.is_valid())
+
+
+class LoginFormTest(TestCase):
+
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username="test",
+                                             email="test@test.ru",
+                                             password="123qwe!@#"
+                                             )
+
+    def test_form_values(self):
+        form_data = {
+            'username': 'test',
+            'password': '123qwe!@#',
+        }
+        form = forms.LoginForm(data=form_data)
+        self.assertTrue(form.is_valid())
