@@ -2,6 +2,10 @@ from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import get_object_or_404, render
 from django.views import View
 from django.views.generic import ListView
+from rest_framework.filters import OrderingFilter
+
+from . import serializers
+from rest_framework.generics import ListAPIView
 
 from . import models
 
@@ -72,3 +76,9 @@ class PostReadFilter(View):
             'section': 'posts'
         })
 
+
+class PostListAPI(ListAPIView):
+    queryset = models.Post.objects.all()
+    serializer_class = serializers.PostSerializer
+    filter_backends = [OrderingFilter]
+    ordering_fields = ['published', 'id']

@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from rest_framework import serializers
 
-from app_users import models
+from . import models
 
 
 class ProfileSerializer(serializers.ModelSerializer):
