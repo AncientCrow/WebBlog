@@ -18,7 +18,6 @@ class PostListTest(TestCase):
 
     def test_view_use_valid_template(self):
         response = self.client.get(reverse("blog:post_list"))
-        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "blog/post/list.html")
 
 
@@ -42,12 +41,10 @@ class PostFilterTest(TestCase):
 
     def test_url_use_valid_template_name_filter_new(self):
         response = self.client.get(reverse('blog:post_filter', kwargs={'action': 1}))
-        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "blog/post/list.html")
 
     def test_url_use_valid_template_name_filter_old(self):
         response = self.client.get(reverse('blog:post_filter', kwargs={'action': 2}))
-        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "blog/post/list.html")
 
 
@@ -71,12 +68,10 @@ class PostReadFilterTest(TestCase):
 
     def test_url_use_valid_template_name_filter_read(self):
         response = self.client.get(reverse('blog:post_read_filter', kwargs={'status': 'read'}))
-        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "blog/post/list.html")
 
     def test_url_use_valid_template_name_filter_unread(self):
         response = self.client.get(reverse('blog:post_read_filter', kwargs={'status': 'unread'}))
-        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "blog/post/list.html")
 
 
@@ -124,5 +119,4 @@ class PostDetailTest(TestCase):
             'day': self.post.published.day,
             'post': self.post.slug
         }))
-        self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "blog/post/detail.html")

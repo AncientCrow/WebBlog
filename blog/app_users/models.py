@@ -15,7 +15,7 @@ class Profile(models.Model):
         verbose_name_plural = 'profiles'
 
     def get_absolute_url(self):
-        return f'/user/{self.id}'
+        return f'/users/{self.user.username}/'
 
     def __str__(self):
         return str(self.user.username)
