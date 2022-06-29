@@ -3,9 +3,14 @@ from django.shortcuts import get_object_or_404, render
 from django.views import View
 from django.views.generic import ListView
 from rest_framework.filters import OrderingFilter
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.schemas import SchemaGenerator
+from rest_framework.views import APIView
+from rest_framework_swagger import renderers
 
 from . import serializers
-from rest_framework.generics import ListAPIView, RetrieveDestroyAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 
 from . import models
 
@@ -79,14 +84,15 @@ class PostReadFilter(View):
 
 class PostListAPI(ListAPIView):
     """
-        Представление для отображение эндпоинта со списком постов.
+        A view for displaying an endpoint with a list of posts.
 
         Arguments
         _________
-            * queryset - отвечает за сбор объектов внутри базы данных для последующего отображения и передачи в формате JSON;
-            * serializer_class - отвечает за преобразование данных модели в удобный для API формат (JSON) и обратно;
-            * filter_backends - Фильтры доступные на эндпоинте
-            * ordering_fields - поля, которые затрагиваются фильтром
+        * queryset - responsible for collecting objects inside the database for subsequent display and transmission
+        in JSON format;
+        * serializer_class - responsible for converting model data into API-friendly format (JSON) and conversely;
+        * filter_backends - responsible for filters available on the endpoint
+        * ordering_fields - responsible for fields that are affected by the filter
     """
     queryset = models.Post.objects.all()
     serializer_class = serializers.PostSerializer
@@ -94,6 +100,63 @@ class PostListAPI(ListAPIView):
     ordering_fields = ['published', 'id']
 
 
-class PostDetailAPI(RetrieveDestroyAPIView):
+class PostDetailAPI(RetrieveUpdateAPIView):
+    """
+        A view for displaying an endpoint with detail information information of posts, where users can read & delete information.
+
+        Arguments
+        _________
+        * queryset - responsible for collecting objects inside the database for subsequent display and transmission
+        in JSON format;
+        * serializer_class - responsible for converting model data into API-friendly format (JSON) and conversely;
+
+    """
     queryset = models.Post.objects.all()
     serializer_class = serializers.PostSerializer
+
+    def put(self, request, *args, **kwargs):
+        """
+            The function allows you to create new information in the database or completely replace the existing one
+
+            Fields
+            ______
+            "author": int - user id in database
+            "title": str - name of your post
+            "slug": str - slug name of your post (usually equal to the title)
+            "text": str - text into post,
+            "published": str - date and time when post was added
+            "status": str - one of the available statuses (published, draft, moderation)
+        """
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """
+            The function allow you to update old information in the database but this information may be partial
+
+            Fields
+            ______
+            "author": int - user id in database
+            "title": str - name of your post
+            "slug": str - slug name of your post (usually equal to the title)
+            "text": str - text into post,
+            "published": date and time when post was added
+            "status": one of the available statuses (published, draft, moderation)
+        """
+        return self.partial_update(request, *args, **kwargs)
+
+
+class SwaggerDocumentation(APIView):
+    """
+        Open the documentation page
+    """
+    permission_classes = [AllowAny]
+    renderer_classes = [
+        renderers.OpenAPIRenderer,
+        renderers.SwaggerUIRenderer,
+    ]
+
+    def get(self, request):
+        generator = SchemaGenerator()
+        schema = generator.get_schema(request=request)
+
+        return Response(schema)

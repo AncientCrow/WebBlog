@@ -9,3 +9,9 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Post
         fields = ['id', 'author', 'title', 'slug', 'text', 'published', 'status']
+
+
+class PostPutPatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Post
+        fields = ['id', 'author', 'title', 'slug', 'text', 'status']
