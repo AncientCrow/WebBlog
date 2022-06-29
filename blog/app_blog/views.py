@@ -5,7 +5,7 @@ from django.views.generic import ListView
 from rest_framework.filters import OrderingFilter
 
 from . import serializers
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveDestroyAPIView
 
 from . import models
 
@@ -78,7 +78,22 @@ class PostReadFilter(View):
 
 
 class PostListAPI(ListAPIView):
+    """
+        Представление для отображение эндпоинта со списком постов.
+
+        Arguments
+        _________
+            * queryset - отвечает за сбор объектов внутри базы данных для последующего отображения и передачи в формате JSON;
+            * serializer_class - отвечает за преобразование данных модели в удобный для API формат (JSON) и обратно;
+            * filter_backends - Фильтры доступные на эндпоинте
+            * ordering_fields - поля, которые затрагиваются фильтром
+    """
     queryset = models.Post.objects.all()
     serializer_class = serializers.PostSerializer
     filter_backends = [OrderingFilter]
     ordering_fields = ['published', 'id']
+
+
+class PostDetailAPI(RetrieveDestroyAPIView):
+    queryset = models.Post.objects.all()
+    serializer_class = serializers.PostSerializer
