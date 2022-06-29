@@ -10,6 +10,6 @@ urlpatterns = [
     path('<int:year>/<int:month>/<int:day>/<slug:post>/',
          views.PostDetail.as_view(), name='post_detail'),
     path('post_api/', views.PostListAPI.as_view(), name='post_api_list'),
-    path('post_api/<int:pk>/', views.PostDetailAPI.as_view(), name='post_detail_api'),
+    path('post_api/<int:id>/', views.PostDetailAPI.as_view(), name='post_detail_api'),
     path('swagger_doc/', views.SwaggerDocumentation.as_view(), name='api_documentation'),
     ]

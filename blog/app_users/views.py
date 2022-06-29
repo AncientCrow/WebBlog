@@ -166,6 +166,7 @@ class UserDetailAPI(RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
+    lookup_field = 'id'
 
     def put(self, request, *args, **kwargs):
         """
@@ -230,6 +231,7 @@ class ProfileDetailAPI(RetrieveUpdateAPIView):
     """
     queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
+    lookup_field = 'id'
 
     def put(self, request, *args, **kwargs):
         """

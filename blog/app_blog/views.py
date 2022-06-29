@@ -113,6 +113,7 @@ class PostDetailAPI(RetrieveUpdateAPIView):
     """
     queryset = models.Post.objects.all()
     serializer_class = serializers.PostSerializer
+    lookup_field = 'id'
 
     def put(self, request, *args, **kwargs):
         """
