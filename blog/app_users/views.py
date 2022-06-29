@@ -86,7 +86,7 @@ class UserDetail(View):
         return render(request, 'users/user/detail.html', {
             'profile': profile,
             'section': 'profile'}
-        )
+                      )
 
 
 class LoginPage(LoginView):
@@ -134,6 +134,17 @@ class FeedFromFollow(View):
 
 
 class UserListAPI(ListAPIView):
+    """
+        A view for displaying an endpoint with a list of users.
+
+        Arguments
+        _________
+        * queryset - responsible for collecting objects inside the database for subsequent display and transmission
+        in JSON format;
+        * serializer_class - responsible for converting model data into API-friendly format (JSON) and conversely;
+        * filter_backends - responsible for filters available on the endpoint
+        * ordering_fields - responsible for fields that are affected by the filter
+    """
 
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
@@ -142,11 +153,63 @@ class UserListAPI(ListAPIView):
 
 
 class UserDetailAPI(RetrieveAPIView):
+    """
+        A view for displaying an endpoint with detail information about user.
+
+        Arguments
+        _________
+        * queryset - responsible for collecting objects inside the database for subsequent display and transmission
+        in JSON format;
+        * serializer_class - responsible for converting model data into API-friendly format (JSON) and conversely;
+
+    """
+
     queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
 
+    def put(self, request, *args, **kwargs):
+        """
+            The function allows you to create new information in the database or completely replace the existing one
+
+            Fields
+            ______
+            * "id": int - user's index in database,
+            * "is_staff": boolean - true or false (moderator or not),
+            * "username": str - just user's nickname,
+            * "first_name": str,
+            * "last_name": str,
+            * "email": str
+        """
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """
+            The function allow you to update old information in the database but this information may be partial
+
+            Fields
+            ______
+            * "id": int - user's index in database,
+            * "is_staff": boolean - true or false (moderator or not),
+            * "username": str - just user's nickname,
+            * "first_name": str,
+            * "last_name": str,
+            * "email": str
+        """
+        return self.partial_update(request, *args, **kwargs)
+
 
 class ProfileListAPI(ListAPIView):
+    """
+        A view for displaying an endpoint with a list of user's profile.
+
+        Arguments
+        _________
+        * queryset - responsible for collecting objects inside the database for subsequent display and transmission
+        in JSON format;
+        * serializer_class - responsible for converting model data into API-friendly format (JSON) and conversely;
+        * filter_backends - responsible for filters available on the endpoint
+        * ordering_fields - responsible for fields that are affected by the filter
+    """
 
     queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
@@ -155,6 +218,41 @@ class ProfileListAPI(ListAPIView):
 
 
 class ProfileDetailAPI(RetrieveUpdateAPIView):
+    """
+        A view for displaying an endpoint with detail information about user's profile.
 
+        Arguments
+        _________
+        * queryset - responsible for collecting objects inside the database for subsequent display and transmission
+        in JSON format;
+        * serializer_class - responsible for converting model data into API-friendly format (JSON) and conversely;
+
+    """
     queryset = models.Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
+
+    def put(self, request, *args, **kwargs):
+        """
+            The function allows you to create new information in the database or completely replace the existing one
+
+            Fields
+            ______
+            * "user": int - user id in database,
+            * "about": str - text about user,
+            * "birthday": str - user's date of birth,
+            * "followers": str - list of user ids in format [ 1,2,3,etc ]
+        """
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        """
+            The function allow you to update old information in the database but this information may be partial
+
+            Fields
+            ______
+            * "user": int - user id in database,
+            * "about": str - text about user,
+            * "birthday": str - user's date of birth,
+            * "followers": str - list of user ids in format [ 1,2,3,etc ]
+        """
+        return self.partial_update(request, *args, **kwargs)

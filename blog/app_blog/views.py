@@ -102,7 +102,7 @@ class PostListAPI(ListAPIView):
 
 class PostDetailAPI(RetrieveUpdateAPIView):
     """
-        A view for displaying an endpoint with detail information information of posts, where users can read & delete information.
+        A view for displaying an endpoint with detail information information of post, where users can read & delete information.
 
         Arguments
         _________
@@ -120,12 +120,12 @@ class PostDetailAPI(RetrieveUpdateAPIView):
 
             Fields
             ______
-            "author": int - user id in database
-            "title": str - name of your post
-            "slug": str - slug name of your post (usually equal to the title)
-            "text": str - text into post,
-            "published": str - date and time when post was added
-            "status": str - one of the available statuses (published, draft, moderation)
+            * "author": int - user id in database
+            * "title": str - name of your post
+            * "slug": str - slug name of your post (usually equal to the title)
+            * "text": str - text into post,
+            * "published": str - date and time when post was added
+            * "status": str - one of the available statuses (published, draft, moderation)
         """
         return self.update(request, *args, **kwargs)
 
@@ -135,12 +135,12 @@ class PostDetailAPI(RetrieveUpdateAPIView):
 
             Fields
             ______
-            "author": int - user id in database
-            "title": str - name of your post
-            "slug": str - slug name of your post (usually equal to the title)
-            "text": str - text into post,
-            "published": date and time when post was added
-            "status": one of the available statuses (published, draft, moderation)
+            * "author": int - user id in database
+            * "title": str - name of your post
+            * "slug": str - slug name of your post (usually equal to the title)
+            * "text": str - text into post,
+            * "published": str - date and time when post was added
+            * "status": str - one of the available statuses (published, draft, moderation)
         """
         return self.partial_update(request, *args, **kwargs)
 
