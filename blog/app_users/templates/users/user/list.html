@@ -11,10 +11,10 @@
                 {{ profile.username }}
             </a>
             и его количество постов
-            {% if user.blog_count is None %}
+            {% if profile.blog_count is None %}
             0
             {% else %}
-            {{ user.blog_count }}
+            {{ profile.blog_count }}
             {% endif %}
         </p>
     {% endfor %}

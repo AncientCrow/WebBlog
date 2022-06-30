@@ -11,5 +11,6 @@
         </h2>
         <p class="date">{{ post.author }} опубликовал пост {{ post.published }}</p>
     {% endfor %}
-    {% include 'blog/paginator.html' with page=page_obj %}
+    {% include 'blog/paginator.html' with page=posts %}
 {% endblock %}
+{% block super %}{% endblock %}
