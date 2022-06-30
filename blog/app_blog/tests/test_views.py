@@ -120,3 +120,41 @@ class PostDetailTest(TestCase):
             'post': self.post.slug
         }))
         self.assertTemplateUsed(response, "blog/post/detail.html")
+
+
+class PostAPITest(TestCase):
+
+    def setUp(self) -> None:
+        user = User.objects.create_user(username="test",
+                                        email="test@test.ru",
+                                        password="123qwe!@#"
+                                        )
+
+        self.post = Post.objects.create(
+            title='test_title',
+            slug='test_title',
+            author=User(id=user.id),
+            text='test_text',
+            published=timezone.now(),
+            created=timezone.now(),
+            updated=timezone.now(),
+            status='published',
+        )
+
+    def test_post_api_list_url_exist(self):
+        response = self.client.get('/blog/post_api/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_api_detail_url_exist(self):
+        post_id = self.post.id
+        response = self.client.get('/blog/post_api/{}/'.format(post_id))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_api_list_url_exist_by_name(self):
+        response = self.client.get(reverse('blog:post_api_list'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_post_api_detail_url_exist_by_name(self):
+        post_id = self.post.id
+        response = self.client.get(reverse('blog:post_detail_api', kwargs={'id': post_id}))
+        self.assertEqual(response.status_code, 200)
