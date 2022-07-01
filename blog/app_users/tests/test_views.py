@@ -37,7 +37,7 @@ class RegistrationTest(TestCase):
 
 
 class UsersFilterTest(TestCase):
-    # добавить исключение при неверном фильтре
+
     def test_url_exist_filter_more(self):
         response = self.client.get('/users/filter/{}/'.format(1))
         self.assertEqual(response.status_code, 200)
@@ -245,10 +245,10 @@ class UserAPITest(TestCase):
         response = self.client.get(reverse('users:user_detail_api', kwargs={'id': user_id}))
         self.assertEqual(response.status_code, 200)
 
+
 class ProfileAPITest(TestCase):
 
     def setUp(self):
-
         self.user = User.objects.create_user(username="test",
                                              email="test@test.ru",
                                              password="123qwe!@#"

@@ -122,6 +122,21 @@ class PostDetailTest(TestCase):
         self.assertTemplateUsed(response, "blog/post/detail.html")
 
 
+class NewPostTest(TestCase):
+
+    def test_url_exist(self):
+        response = self.client.get('/blog/new_post/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_exist_by_name(self):
+        response = self.client.get(reverse('blog:new_post'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_url_use_valid_tempate(self):
+        response = self.client.get(reverse('blog:new_post'))
+        self.assertTemplateUsed(response, 'blog/post/add.html')
+
+
 class PostAPITest(TestCase):
 
     def setUp(self) -> None:

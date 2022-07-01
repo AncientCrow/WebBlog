@@ -4,7 +4,7 @@ from django.db import models
 
 class Profile(models.Model):
     """
-        Моедль профиля пользователя, является дополнением к модели User,
+        Модель профиля пользователя, является дополнением к модели User,
         и предоставляет дополнительные данные о пользователе.
 
         Attributes:
@@ -15,6 +15,7 @@ class Profile(models.Model):
         * birthday - день рождения пользователя
         * followers - поле с отношением многие ко многим, содержит в себе id подписчиков
     """
+
     icon = models.ImageField(default='default/no_image.png', upload_to='users', blank=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name='user')
     about = models.TextField(max_length=10000, null=True, verbose_name='about')
