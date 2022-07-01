@@ -6,8 +6,11 @@
     <h1>Это профиль {{ profile.user.username }}</h1>
     <div class="profile-info">
         <p>А это фото профиля</p>
-        <img src="{{ user.icon.url }}">
+        <img src="{{ profile.icon.url }}" alt="icon" height="100" width="100">
         {% with total_followers=profile.followers.count %}
+        <br>
+        <p>О пользователе: {{ profile.about }}</p>
+        <p>День рождения пользователя {{ profile.birthday }}</p>
         <span class="count">
             <span class="total">
                Всего подписчиков: {{ total_followers }}
@@ -28,5 +31,8 @@
     </div>
     {% endwith %}
     <p>Добро пожаловать хптьфу</p>
+    {% if request.user == profile.user %}
     <a href="{% url 'users:personal_feed' request.user %}  ">Новости</a>
+    <a href="{% url 'users:user_edit' request.user %}">Редактирование</a>
+    {% endif %}
 {% endblock %}

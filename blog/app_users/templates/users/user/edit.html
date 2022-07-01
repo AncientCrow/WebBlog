@@ -1,0 +1,18 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Редактирование{% endblock %}
+
+{% block content %}
+  <form method="post" action="" class="login" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+        <p>
+            <label for="id_{{field.name}}">{{ field.label }}</label>
+            {{ field }}
+        </p>
+    {% endfor %}
+      <p class="edit-submit">
+        <button type="submit" class="login-button">Редактировать</button>
+      </p>
+  </form>
+{% endblock %}

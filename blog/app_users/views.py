@@ -5,6 +5,7 @@ from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
+from django.views.generic import FormView
 from django_filters import ChoiceFilter
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -18,10 +19,13 @@ from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView, Retrieve
 
 
 class RegistrationPage(View):
+    """
+     Представление для отображения и последующей обработки формы регистрации
+    """
 
     def get(self, request):
-        registration = forms.RegistrationForm
-        return render(request, 'users/user/registration.html', {'form': registration})
+        form = forms.RegistrationForm
+        return render(request, 'users/user/registration.html', {'form': form})
 
     def post(self, request):
         form = forms.RegistrationForm(request.POST, request.FILES)
@@ -49,6 +53,9 @@ class RegistrationPage(View):
 
 
 class UserList(View):
+    """
+        Представление для отображения списка пользователей и количества их постов
+    """
 
     def get(self, request):
         users_list = models.User.objects.annotate(blog_count=Count('blog_post')).order_by('blog_count')
@@ -63,6 +70,9 @@ class UserList(View):
 
 
 class UsersFilter(View):
+    """
+        Представление для предоставления списка пользователей по уменьшению/увеличению списка постов
+    """
 
     def get(self, request, pk):
         if pk == 1:
@@ -79,6 +89,9 @@ class UsersFilter(View):
 
 
 class UserDetail(View):
+    """
+        Представление для отображения детальной информации о пользователе
+    """
 
     def get(self, request, username):
         user = get_object_or_404(models.User, username=username)
@@ -89,16 +102,48 @@ class UserDetail(View):
                       )
 
 
+class UserEdit(View):
+    """
+        Представление для отображения страницы редактирования профиля
+    """
+    def get(self, request, username):
+        form = forms.EditForm
+        return render(request, 'users/user/edit.html', {'form': form})
+
+    def post(self, request, username):
+        form = forms.EditForm(request.POST, request.FILES)
+        if form.is_valid():
+            about = form.cleaned_data.get('about')
+            icon = form.cleaned_data.get('icon')
+            user = request.user.id
+            profile = get_object_or_404(models.Profile, user=user)
+            profile.about = about
+            profile.icon = icon
+            profile.save()
+            return redirect("users:user_list")
+        else:
+            return render(request, 'users/user/edit.html', {'form': form})
+
+
 class LoginPage(LoginView):
+    """
+        Представлене для отображения страницы для входа в профиль пользователя
+    """
     template_name = 'users/user/login.html'
     authentication_form = forms.LoginForm
 
 
 class LogoutPage(LogoutView):
+    """
+        Представление для выхода из профиля пользователя
+    """
     pass
 
 
 def user_follow(request):
+    """
+        Функция-представление для обработки запроса на добавление/удаление подписчика
+    """
     if request.method == 'POST':
         follower = models.Profile.objects.get(user=request.user)
         profile_id = request.POST.get('profile_id')
@@ -112,7 +157,9 @@ def user_follow(request):
 
 
 class FeedFromFollow(View):
-
+    """
+        Представление для отображения постов, согласно имеющимся подпискам на того или иного пользователя
+    """
     def get(self, request, username):
         username = models.User.objects.get(username=username)
         profiles = models.Profile.objects.filter(followers__in=[username.id])
@@ -146,7 +193,7 @@ class UserListAPI(ListAPIView):
         * ordering_fields - responsible for fields that are affected by the filter
     """
 
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('id')
     serializer_class = serializers.UserSerializer
     filter_backends = [OrderingFilter]
     ordering_fields = ['date_joined', ]
@@ -164,7 +211,7 @@ class UserDetailAPI(RetrieveAPIView):
 
     """
 
-    queryset = User.objects.all()
+    queryset = User.objects.all().order_by('id')
     serializer_class = serializers.UserSerializer
     lookup_field = 'id'
 

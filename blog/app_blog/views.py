@@ -37,26 +37,26 @@ class PostDetail(View):
                       )
 
 
-class PostFilter(View):
+def post_filter(request, action):
+    if action == 1:
+        posts = models.Post.published_manager.order_by('-published')
+    elif action == 2:
+        posts = models.Post.published_manager.order_by('published')
 
-    def get(self, request, action):
-        if action == 1:
-            posts = models.Post.published_manager.order_by('-published')
-        elif action == 2:
-            posts = models.Post.published_manager.order_by('published')
-        paginator = Paginator(posts, 10)
-        page = request.GET.get('page')
-        try:
-            posts = paginator.page(page)
-        except PageNotAnInteger:
-            posts = paginator.page(1)
-        except EmptyPage:
-            posts = paginator.page(paginator.num_pages)
-        return render(request, 'blog/post/list.html', {
-            'posts': posts,
-            'page': page,
-            'section': 'posts'
-        })
+    paginator = Paginator(posts, 10)
+    page = request.GET.get('page')
+    print(page)
+    try:
+        posts = paginator.get_page(page)
+    except PageNotAnInteger:
+        posts = paginator.page(1)
+    except EmptyPage:
+        posts = paginator.page(paginator.num_pages)
+    return render(request, 'blog/post/list.html', {
+        'posts': posts,
+        'page': page,
+        'section': 'posts'
+    })
 
 
 class PostReadFilter(View):
