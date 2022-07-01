@@ -17,6 +17,9 @@ from . import models, forms
 
 
 class PostList(ListView):
+    """
+        Представление для отображения страницы со списком постов
+    """
     model = models.Post
     context_object_name = 'posts'
     paginate_by = 10
@@ -24,7 +27,9 @@ class PostList(ListView):
 
 
 class PostDetail(View):
-
+    """
+        Преставление для отображения страницы с детальной информацией о посте
+    """
     def get(self, request, year, month, day, post):
         user = request.user
         our_post = get_object_or_404(models.Post, slug=post, status='published',
@@ -39,7 +44,9 @@ class PostDetail(View):
 
 
 class NewPost(View):
-
+    """
+        Представление для отображения страницы с созданием нового поста
+    """
     def get(self, request):
         form = forms.NewPostForm
         return render(request, 'blog/post/add.html', {'form': form})
@@ -64,6 +71,10 @@ class NewPost(View):
 
 
 def post_filter(request, action):
+    """
+        Функция-представление для отображения отфильтрованного списка постов
+        по времени создания раньше/позже
+    """
     if action == 1:
         posts = models.Post.published_manager.order_by('-published')
     elif action == 2:
@@ -85,7 +96,10 @@ def post_filter(request, action):
 
 
 class PostReadFilter(View):
-
+    """
+        Представление для отображения отфильтрованного
+        списка постов по статусу прочитан/непрочитан
+    """
     def get(self, request, status):
         user = request.user
         if status == "read":
