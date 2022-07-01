@@ -32,7 +32,9 @@
     {% endwith %}
     <p>Добро пожаловать хптьфу</p>
     {% if request.user == profile.user %}
+    <a href="{% url 'blog:new_post' %}">Создать пост</a>
     <a href="{% url 'users:personal_feed' request.user %}  ">Новости</a>
     <a href="{% url 'users:user_edit' request.user %}">Редактирование</a>
+    <a href="{% url 'users:logout' %}">Выйти из профиля</a>
     {% endif %}
 {% endblock %}

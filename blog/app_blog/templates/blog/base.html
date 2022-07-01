@@ -19,6 +19,9 @@
                     <a href="{% url "users:user_list" %}">Пользователи</a>
                 </li>
             </ul>
+        {% else %}
+            <a href="{% url 'users:registration' %}">Регистрация</a>
+            <a href="{% url 'users:login' %}">Вход</a>
         {% endif %}
     </div>
     <div id="content">
