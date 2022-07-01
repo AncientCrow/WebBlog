@@ -1,5 +1,6 @@
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.views import View
 from django.views.generic import ListView
 from rest_framework.filters import OrderingFilter
@@ -12,11 +13,11 @@ from rest_framework_swagger import renderers
 from . import serializers
 from rest_framework.generics import ListAPIView, RetrieveUpdateAPIView
 
-from . import models
+from . import models, forms
 
 
 class PostList(ListView):
-    queryset = models.Post.published_manager.all()
+    model = models.Post
     context_object_name = 'posts'
     paginate_by = 10
     template_name = 'blog/post/list.html'
@@ -37,6 +38,31 @@ class PostDetail(View):
                       )
 
 
+class NewPost(View):
+
+    def get(self, request):
+        form = forms.NewPostForm
+        return render(request, 'blog/post/add.html', {'form': form})
+
+    def post(self, request):
+        form = forms.NewPostForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data.get('title')
+            slug = form.cleaned_data.get('slug')
+            text = form.cleaned_data.get('text')
+            user = get_object_or_404(User, id=request.user.id)
+
+            models.Post.objects.create(
+                title=title,
+                slug=slug,
+                text=text,
+                author=user,
+            )
+            return redirect("blog:post_list")
+        else:
+            return render(request, 'blog/post/add.html', {'form': form})
+
+
 def post_filter(request, action):
     if action == 1:
         posts = models.Post.published_manager.order_by('-published')
@@ -45,7 +71,6 @@ def post_filter(request, action):
 
     paginator = Paginator(posts, 10)
     page = request.GET.get('page')
-    print(page)
     try:
         posts = paginator.get_page(page)
     except PageNotAnInteger:
@@ -54,7 +79,7 @@ def post_filter(request, action):
         posts = paginator.page(paginator.num_pages)
     return render(request, 'blog/post/list.html', {
         'posts': posts,
-        'page': page,
+        'page_obj': posts,
         'section': 'posts'
     })
 
@@ -77,7 +102,7 @@ class PostReadFilter(View):
             posts = paginator.page(paginator.num_pages)
         return render(request, 'blog/post/list.html', {
             'posts': posts,
-            'page': page,
+            'page_obj': posts,
             'section': 'posts'
         })
 

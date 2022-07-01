@@ -5,9 +5,6 @@ from django.db.models import Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from django.contrib.auth.models import User
-from django.views.generic import FormView
-from django_filters import ChoiceFilter
-from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.filters import OrderingFilter
 
@@ -30,10 +27,16 @@ class RegistrationPage(View):
     def post(self, request):
         form = forms.RegistrationForm(request.POST, request.FILES)
         if form.is_valid():
-            user = form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get("password")
             birthday = form.cleaned_data.get('birthday')
             about = form.cleaned_data.get('about')
             icon = form.cleaned_data.get('icon')
+
+            user = models.User.objects.create_user(
+                username=username,
+                password=password
+            )
 
             models.Profile.objects.create(
                 user=user,
@@ -42,12 +45,11 @@ class RegistrationPage(View):
                 icon=icon
             )
             new_user = authenticate(
-                username=form.cleaned_data.get("username"),
-                password=form.cleaned_data.get("password")
+                username=username,
+                password=password
             )
             login(request, new_user)
-            user.save()
-            return redirect("post_list")
+            return redirect("blog:post_list")
         else:
             return render(request, 'users/user/registration.html', {'form': form})
 

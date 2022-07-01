@@ -2,7 +2,6 @@ import datetime
 
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
 
 
 class RegistrationForm(forms.Form):
@@ -30,10 +29,6 @@ class RegistrationForm(forms.Form):
         widget=forms.SelectDateWidget(
             years=range(start_year, end_year)),
     )
-
-    class Meta:
-        model = User
-        fields = ['username', 'date']
 
 
 class LoginForm(AuthenticationForm):
