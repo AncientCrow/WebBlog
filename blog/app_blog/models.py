@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from transliterate import slugify, translit
 
 
 class PublishedManager(models.Manager):
@@ -54,3 +55,8 @@ class Post(models.Model):
     def get_absolute_url(self):
         return reverse('blog:post_detail',
                        args=[self.published.year, self.published.month, self.published.day, self.slug])
+
+    def save(self, *args, **kwargs):
+        title = translit(self.title, 'ru')
+        self.slug = slugify(title)
+        super(Post, self).save(*args, **kwargs)

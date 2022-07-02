@@ -8,7 +8,6 @@ class NewPostFormTest(TestCase):
     def test_form_label(self):
         form = forms.NewPostForm()
         self.assertTrue(form.fields['title'].label == 'Название')
-        self.assertTrue(form.fields['slug'].label == 'Slug-название')
         self.assertTrue(form.fields['text'].label == 'Текст')
 
     def test_form_values(self):
