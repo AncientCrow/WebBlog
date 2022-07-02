@@ -28,7 +28,7 @@ class PostTest(TestCase):
     def test_absolute_url(self):
         year, month = self.post.published.year, self.post.published.month
         day, post = self.post.published.day, self.post.slug
-        self.assertEqual(self.post.get_absolute_url(), '/blog/{}/{}/{}/{}/'.format(year, month, day, post))
+        self.assertEqual(self.post.get_absolute_url(), '/{}/{}/{}/{}/'.format(year, month, day, post))
 
     def test_title_max_length(self):
         post = Post.objects.get(id=self.post.id)

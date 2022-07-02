@@ -9,7 +9,7 @@ from app_blog.models import Post
 class PostListTest(TestCase):
 
     def test_url_exist(self):
-        response = self.client.get("/blog/", )
+        response = self.client.get("/", )
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_by_name(self):
@@ -24,11 +24,11 @@ class PostListTest(TestCase):
 class PostFilterTest(TestCase):
 
     def test_url_exist_filter_new(self):
-        response = self.client.get('/blog/filter/{}/'.format(1))
+        response = self.client.get('/filter/{}/'.format(1))
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_filter_old(self):
-        response = self.client.get('/blog/filter/{}/'.format(2), )
+        response = self.client.get('/filter/{}/'.format(2), )
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_by_name_filter_new(self):
@@ -51,11 +51,11 @@ class PostFilterTest(TestCase):
 class PostReadFilterTest(TestCase):
 
     def test_url_exist_filter_read(self):
-        response = self.client.get('/blog/filter/read/')
+        response = self.client.get('/filter/read/')
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_filter_unread(self):
-        response = self.client.get('/blog/filter/unread/')
+        response = self.client.get('/filter/unread/')
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_by_name_filter_read(self):
@@ -98,7 +98,7 @@ class PostDetailTest(TestCase):
         self.client.login(username='test', password='123qwe!@#')
         year, month,  = self.post.published.year, self.post.published.month
         day, slug = self.post.published.day, 'test_title'
-        response = self.client.get("/blog/{}/{}/{}/{}/".format(year, month, day, slug))
+        response = self.client.get("/{}/{}/{}/{}/".format(year, month, day, slug))
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_by_name(self):
@@ -125,7 +125,7 @@ class PostDetailTest(TestCase):
 class NewPostTest(TestCase):
 
     def test_url_exist(self):
-        response = self.client.get('/blog/new_post/')
+        response = self.client.get('/new_post/')
         self.assertEqual(response.status_code, 200)
 
     def test_url_exist_by_name(self):
@@ -157,12 +157,12 @@ class PostAPITest(TestCase):
         )
 
     def test_post_api_list_url_exist(self):
-        response = self.client.get('/blog/post_api/')
+        response = self.client.get('/post_api/')
         self.assertEqual(response.status_code, 200)
 
     def test_post_api_detail_url_exist(self):
         post_id = self.post.id
-        response = self.client.get('/blog/post_api/{}/'.format(post_id))
+        response = self.client.get('/post_api/{}/'.format(post_id))
         self.assertEqual(response.status_code, 200)
 
     def test_post_api_list_url_exist_by_name(self):
