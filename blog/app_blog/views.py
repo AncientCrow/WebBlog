@@ -20,7 +20,7 @@ class PostList(ListView):
     """
         Представление для отображения страницы со списком постов
     """
-    model = models.Post
+    queryset = models.Post.published_manager.all()
     context_object_name = 'posts'
     paginate_by = 10
     template_name = 'blog/post/list.html'
@@ -55,13 +55,11 @@ class NewPost(View):
         form = forms.NewPostForm(request.POST)
         if form.is_valid():
             title = form.cleaned_data.get('title')
-            slug = form.cleaned_data.get('slug')
             text = form.cleaned_data.get('text')
             user = get_object_or_404(User, id=request.user.id)
 
             models.Post.objects.create(
                 title=title,
-                slug=slug,
                 text=text,
                 author=user,
             )

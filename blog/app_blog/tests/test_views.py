@@ -84,8 +84,7 @@ class PostDetailTest(TestCase):
                                         )
 
         self.post = Post.objects.create(
-            title='test_title',
-            slug='test_title',
+            title='ара',
             author=User(id=user.id),
             text='test_text',
             published=timezone.now(),
@@ -97,7 +96,7 @@ class PostDetailTest(TestCase):
     def test_url_exist(self):
         self.client.login(username='test', password='123qwe!@#')
         year, month,  = self.post.published.year, self.post.published.month
-        day, slug = self.post.published.day, 'test_title'
+        day, slug = self.post.published.day, self.post.slug
         response = self.client.get("/{}/{}/{}/{}/".format(year, month, day, slug))
         self.assertEqual(response.status_code, 200)
 
@@ -146,8 +145,7 @@ class PostAPITest(TestCase):
                                         )
 
         self.post = Post.objects.create(
-            title='test_title',
-            slug='test_title',
+            title='ара',
             author=User(id=user.id),
             text='test_text',
             published=timezone.now(),

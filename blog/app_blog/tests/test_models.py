@@ -14,9 +14,8 @@ class PostTest(TestCase):
                                         )
 
         self.post = Post.objects.create(
-            title='test_title',
-            slug='test_title',
-            author=User(id=user.id),
+            title='text',
+            author=user,
             text='test_text',
             published=timezone.now(),
             created=timezone.now(),
